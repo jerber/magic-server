@@ -31,6 +31,7 @@ async def add_process_time_header(request: Request, call_next):
     start_time = time.time()
     g.request = request
     g.app = app
+    print("url path", request.url.path)
     response = await call_next(request)
     # also process the Tasks now
     start_tasks = time.time()
