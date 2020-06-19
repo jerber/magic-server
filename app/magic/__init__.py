@@ -10,7 +10,8 @@ from . import config
 router = APIRouter()
 
 
-app = FastAPI() if os.environ.get("LOCAL") else FastAPI(openapi_prefix="/dev")
+# app = FastAPI() if os.environ.get("LOCAL") else FastAPI(openapi_prefix="/dev")
+app = FastAPI() if os.environ.get("LOCAL") else FastAPI(root_path="/dev")
 
 # add auth here... for now hardcode but in future look to env variable for which auth...
 from .Auth import Doorman
