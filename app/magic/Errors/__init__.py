@@ -1,1 +1,1 @@
-from .MagicExceptions import BackendException, FrontendException
+from .MagicExceptions import MagicException, BackendException, FrontendException

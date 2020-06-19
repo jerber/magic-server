@@ -1,7 +1,7 @@
 from app.magic import router
-from app.magic.Errors import BackendException
+from app.Errors.TestError import TestError
 
 
 @router.get("/test_errors")
 def test_errors():
-    raise BackendException(message="This test worked!")
+    raise TestError(message="This test worked!")
