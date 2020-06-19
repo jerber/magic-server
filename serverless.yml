@@ -9,6 +9,12 @@ provider:
   timeout: 15
   tracing: # what does this do exactly?
     lambda: true
+  environment:
+    DOORMAN_PUBLIC_PROJECT_ID: ${env:DOORMAN_PUBLIC_PROJECT_ID}
+    FIREBASE_PROJECT_ID: ${env:FIREBASE_PROJECT_ID}
+    CLOUD_FUNCTION_LOCATION: ${env:CLOUD_FUNCTION_LOCATION}
+
+
 
 functions:
   app:
@@ -26,6 +32,9 @@ plugins:
   - serverless-python-requirements
   - serverless-apigwy-binary
   - serverless-apigw-binary
+  - serverless-dotenv-plugin
+
+
 package:
   exclude:
     - node_modules/**

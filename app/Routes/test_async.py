@@ -14,6 +14,8 @@ from app.magic import router
 def sleep_for_five(secs: float, test_user: TestUser):
     print("starting to sleep for test user", test_user)
     time.sleep(secs)
+    test_user.slept = True
+    test_user.save(merge=True)
     print("ended sleep for test user", test_user)
 
 

@@ -5,10 +5,14 @@ from fastapi.middleware.cors import CORSMiddleware
 from mangum import Mangum
 from app.magic.Globals.G import g
 
-from app.magic import config
+from . import config
 
 router = APIRouter()
 from app import Routes
+
+# add auth here... for now hardcode but in future look to env variable for which auth...
+from .Auth import Doorman
+
 
 app = FastAPI() if os.environ.get("LOCAL") else FastAPI(openapi_prefix="/dev")
 
