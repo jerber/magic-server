@@ -8,12 +8,13 @@ from app.magic.Globals.G import g
 from . import config
 
 router = APIRouter()
-from app import Routes
+
+
+app = FastAPI() if os.environ.get("LOCAL") else FastAPI(openapi_prefix="/dev")
 
 # add auth here... for now hardcode but in future look to env variable for which auth...
 from .Auth import Doorman
-
-app = FastAPI() if os.environ.get("LOCAL") else FastAPI(openapi_prefix="/dev")
+from app import Routes
 
 
 app.add_middleware(
