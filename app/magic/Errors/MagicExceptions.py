@@ -5,8 +5,8 @@ from fastapi.responses import JSONResponse
 
 class MagicException(Exception):
     def __init__(self, message: str):
-        self.status_code = 452
-        self.message = message
+        self.status_code: int = 452
+        self.message: str = message
 
 
 class BackendException(MagicException):
