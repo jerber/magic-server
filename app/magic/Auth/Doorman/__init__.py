@@ -8,13 +8,14 @@ from .CurrentUser import CurrentUser
 from app.magic import router
 from firebase_admin import auth
 
+from .errors import DoormanAuthException
+
 
 LOCATION, PROJECT_ID = (
     os.environ.get("CLOUD_FUNCTION_LOCATION"),
     os.environ.get("FIREBASE_PROJECT_ID"),
 )
 
-print("LOCATION", LOCATION, "PROJECT_ID", PROJECT_ID)
 ID_TOKEN_ENDPOINT: str = f"https://{LOCATION}-{PROJECT_ID}.cloudfunctions.net/getIdToken"
 DOORMAN_BACKEND_ENDPOINT: str = "https://sending-messages-for-doorman.herokuapp.com/phoneLogic"
 
@@ -34,8 +35,6 @@ def login_with_phone(phone_number: str):
 
 @router.post("/token")
 def login(form_data: OAuth2PasswordRequestForm = Depends()):
-    print("form_data", form_data.username, form_data.password)
-
     body = {
         "action": "verifyCode",
         "phoneNumber": form_data.username,
@@ -46,30 +45,23 @@ def login(form_data: OAuth2PasswordRequestForm = Depends()):
     backend_token = resp.get("token")
     if not backend_token:
         print(resp)
-        return resp
+        raise DoormanAuthException(message=str(resp))
 
     id_resp = requests.post(ID_TOKEN_ENDPOINT, json={"token": backend_token}).json()
     id_token = id_resp.get("idToken")
     if not id_token:
         print(id_resp)
-        return id_resp
+        raise DoormanAuthException(message=str(id_resp))
 
     return {"access_token": id_token, "token_type": "bearer"}
 
 
 async def get_current_user(token: str = Depends(oath2_scheme)):
-    print("TOKKKKK", token)
     decoded = auth.verify_id_token(token)
-    print("doceded", decoded)
     current_user = CurrentUser(**decoded)
-    print("current user", current_user)
     return current_user
 
 
-@router.get("/secure_things")
-def get_secure_things(
-    message: str, current_user: CurrentUser = Depends(get_current_user)
-):
-    print("message", message)
-    print("this is the current authed user!", current_user)
+@router.get("/get_current_user", response_model=CurrentUser)
+def get_current_user(current_user: CurrentUser = Depends(get_current_user)):
     return current_user

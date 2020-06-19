@@ -10,7 +10,6 @@ from . import config
 router = APIRouter()
 
 
-# app = FastAPI() if os.environ.get("LOCAL") else FastAPI(openapi_prefix="/dev")
 app = FastAPI() if os.environ.get("LOCAL") else FastAPI(root_path="/dev")
 
 # add auth here... for now hardcode but in future look to env variable for which auth...
@@ -32,7 +31,6 @@ async def add_process_time_header(request: Request, call_next):
     start_time = time.time()
     g.request = request
     g.app = app
-    print("body", await request.body())
     response = await call_next(request)
     # also process the Tasks now
     start_tasks = time.time()
