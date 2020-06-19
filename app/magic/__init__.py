@@ -35,11 +35,12 @@ async def add_process_time_header(request: Request, call_next):
     response = await call_next(request)
     # also process the Tasks now
     start_tasks = time.time()
-    g.save_tasks()
-    tasks_took = time.time() - start_tasks
+    if g.tasks:
+        g.save_tasks()
+        tasks_took = time.time() - start_tasks
+        response.headers["X-Tasks-Time"] = str(tasks_took)
     process_time = time.time() - start_time
     response.headers["X-Process-Time"] = str(process_time)
-    response.headers["X-Tasks-Time"] = str(tasks_took)
     return response
 
 

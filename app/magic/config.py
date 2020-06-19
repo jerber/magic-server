@@ -13,3 +13,8 @@ path = Path(__file__).parent.absolute()
 os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = os.path.join(
     path, "my-service-account.json"
 )
+
+# create the firebase connection with the service account
+from magicdb import db
+
+db.conn

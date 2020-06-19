@@ -52,6 +52,8 @@ class G:
 
     def save_tasks(self):
         """This will have a limit of 500 background tasks at a time..."""
+        if not self.tasks:
+            return
         batch = magicdb.batch()
         count = 0
         saved_tasks = []
