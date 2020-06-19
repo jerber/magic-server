@@ -1,0 +1,41 @@
+service: firebase-lambda-test
+# app and org for use with dashboard.serverless.com
+app: firebase-lambda-test
+org: jerber
+
+provider:
+  name: aws
+  runtime: python3.8
+  timeout: 15
+  tracing: # what does this do exactly?
+    lambda: true
+
+functions:
+  app:
+    handler: main.handler
+    events:
+      - http: ANY /
+      - http:
+          path: /{proxy+}
+          method: ANY
+          contentHandling: CONVERT_TO_BINARY
+          request:
+            passThrough: WHEN_NO_MATCH
+
+plugins:
+  - serverless-python-requirements
+  - serverless-apigwy-binary
+  - serverless-apigw-binary
+package:
+  exclude:
+    - node_modules/**
+    - venv/**
+    - env/**
+
+
+custom:
+  pythonRequirements:
+    dockerizePip: non-linux
+  apigwBinary:
+    types:
+      - '*/*'
