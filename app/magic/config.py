@@ -22,8 +22,6 @@ env_path = os.path.join(os.getcwd(), ".env")
 if os.path.exists(env_path):
     load_dotenv(env_path)
 
-# check either in the cwd or in this dir for the service account
-
 service_account_path = get_service_account_path()
 if service_account_path.exists():
     # will this work on windows?

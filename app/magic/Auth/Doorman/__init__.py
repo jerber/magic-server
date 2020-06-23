@@ -11,9 +11,10 @@ from firebase_admin import auth
 from .errors import DoormanAuthException
 
 
-LOCATION, PROJECT_ID = (
-    os.environ.get("CLOUD_FUNCTION_LOCATION"),
+LOCATION, PROJECT_ID, DOORMAN_ID = (
+    os.environ.get("CLOUD_FUNCTION_LOCATION", "us-central1"),
     os.environ.get("FIREBASE_PROJECT_ID"),
+    os.environ.get("DOORMAN_PUBLIC_PROJECT_ID"),
 )
 
 ID_TOKEN_ENDPOINT: str = f"https://{LOCATION}-{PROJECT_ID}.cloudfunctions.net/getIdToken"
@@ -23,17 +24,22 @@ token_url = "/token" if os.environ.get("LOCAL") else "/dev/token"
 oath2_scheme = OAuth2PasswordBearer(tokenUrl=token_url)
 
 
-@router.post("/login_with_phone")
-def login_with_phone(phone_number: str):
-    if not PROJECT_ID:
+def has_doorman_vars():
+    doorman_vars = [LOCATION, PROJECT_ID, DOORMAN_ID]
+    if None in doorman_vars:
         raise DoormanAuthException(
-            message="No Doorman credentials found in .env file. Need DOORMAN_PUBLIC_PROJECT_ID, "
+            message="Not all Doorman credentials found in .env file. Need DOORMAN_PUBLIC_PROJECT_ID, "
             "FIREBASE_PROJECT_ID, and CLOUD_FUNCTION_LOCATION"
         )
+
+
+@router.post("/login_with_phone")
+def login_with_phone(phone_number: str):
+    has_doorman_vars()
     body = {
         "action": "loginWithPhone",
         "phoneNumber": phone_number,
-        "publicProjectId": os.environ.get("DOORMAN_PUBLIC_PROJECT_ID"),
+        "publicProjectId": DOORMAN_ID,
     }
     resp = requests.post(DOORMAN_BACKEND_ENDPOINT, json=body).json()
     return resp
@@ -41,11 +47,12 @@ def login_with_phone(phone_number: str):
 
 @router.post("/token")
 def login(form_data: OAuth2PasswordRequestForm = Depends()):
+    has_doorman_vars()
     body = {
         "action": "verifyCode",
         "phoneNumber": form_data.username,
         "code": form_data.password,
-        "publicProjectId": os.environ.get("DOORMAN_PUBLIC_PROJECT_ID"),
+        "publicProjectId": DOORMAN_ID,
     }
     resp = requests.post(DOORMAN_BACKEND_ENDPOINT, json=body).json()
     backend_token = resp.get("token")
