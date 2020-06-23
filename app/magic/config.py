@@ -9,12 +9,15 @@ if os.path.exists(env_path):
 
 path = Path(__file__).parent.absolute()
 
+service_account_name = "my-service-account.json"
 
-os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = os.path.join(
-    path, "my-service-account.json"
-)
+if Path(service_account_name).exists():
 
-# create the firebase connection with the service account
-from magicdb import db
+    os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = os.path.join(
+        path, service_account_name
+    )
 
-db.conn
+    # create the firebase connection with the service account
+    from magicdb import db
+
+    db.conn
