@@ -1,6 +1,6 @@
 import time
 import os
-from fastapi import FastAPI, APIRouter, Request
+from fastapi import FastAPI, APIRouter, Request, Depends
 from fastapi.middleware.cors import CORSMiddleware
 from mangum import Mangum
 
@@ -16,6 +16,10 @@ from app.magic.Globals.G import g
 
 # add auth here... for now hardcode but in future look to env variable for which auth...
 from .Auth import Doorman
+from .Auth.Doorman import get_current_user, CurrentUser
+
+GET_USER = Depends(get_current_user)
+
 from app import Routes
 
 

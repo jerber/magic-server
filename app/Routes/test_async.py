@@ -7,11 +7,9 @@ from app.Models.TestUser import TestUser
 
 from app.magic import router
 
-from pydantic import BaseModel
 from fastapi import Body, Depends
 
-from app.magic.Auth.Doorman import get_current_user
-from app.magic.Auth.Doorman.CurrentUser import CurrentUser
+from app.magic import get_current_user, CurrentUser, GET_USER
 
 
 @run_in_background
@@ -39,6 +37,5 @@ def test_async(*, secs: float = 5):
 
 
 @router.get("/hello")
-def hello(current_user: CurrentUser = Depends(get_current_user)):
-    print(current_user)
+def hello(current_user: CurrentUser = GET_USER):
     return current_user
