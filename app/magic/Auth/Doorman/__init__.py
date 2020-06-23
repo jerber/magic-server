@@ -25,6 +25,11 @@ oath2_scheme = OAuth2PasswordBearer(tokenUrl=token_url)
 
 @router.post("/login_with_phone")
 def login_with_phone(phone_number: str):
+    if not PROJECT_ID:
+        raise DoormanAuthException(
+            message="No Doorman credentials found in .env file. Need DOORMAN_PUBLIC_PROJECT_ID, "
+            "FIREBASE_PROJECT_ID, and CLOUD_FUNCTION_LOCATION"
+        )
     body = {
         "action": "loginWithPhone",
         "phoneNumber": phone_number,

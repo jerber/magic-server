@@ -5,8 +5,13 @@ from app.magic.Decorators.background_tasks import run_in_background
 
 from app.Models.TestUser import TestUser
 
-
 from app.magic import router
+
+from pydantic import BaseModel
+from fastapi import Body, Depends
+
+from app.magic.Auth.Doorman import get_current_user
+from app.magic.Auth.Doorman.CurrentUser import CurrentUser
 
 
 @run_in_background
@@ -31,3 +36,9 @@ def test_async(*, secs: float = 5, test_user: TestUser):
 def test_async(*, secs: float = 5):
     task_id = sleep_for_five(secs)
     return {"task_id": task_id}
+
+
+@router.get("/hello")
+def hello(current_user: CurrentUser = Depends(get_current_user)):
+    print(current_user)
+    return current_user
