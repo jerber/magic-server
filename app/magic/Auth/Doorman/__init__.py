@@ -1,5 +1,6 @@
 import requests
 import os
+from functools import wraps
 
 from fastapi import Depends
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
@@ -24,6 +25,21 @@ token_url = "/token" if os.environ.get("LOCAL") else "/dev/token"
 oath2_scheme = OAuth2PasswordBearer(tokenUrl=token_url)
 
 
+def need_doorman_vars(f):
+    @wraps(f)
+    def wrapper(*args, **kwargs):
+        doorman_vars = [LOCATION, PROJECT_ID, DOORMAN_ID]
+        if None in doorman_vars:
+            raise DoormanAuthException(
+                message="Not all Doorman credentials found in .env file. Need DOORMAN_PUBLIC_PROJECT_ID, "
+                "FIREBASE_PROJECT_ID, and CLOUD_FUNCTION_LOCATION"
+            )
+        return f(*args, **kwargs)
+
+    return wrapper
+
+
+"""
 def has_doorman_vars():
     doorman_vars = [LOCATION, PROJECT_ID, DOORMAN_ID]
     if None in doorman_vars:
@@ -31,11 +47,12 @@ def has_doorman_vars():
             message="Not all Doorman credentials found in .env file. Need DOORMAN_PUBLIC_PROJECT_ID, "
             "FIREBASE_PROJECT_ID, and CLOUD_FUNCTION_LOCATION"
         )
+"""
 
 
+@need_doorman_vars
 @router.post("/login_with_phone")
 def login_with_phone(phone_number: str):
-    has_doorman_vars()
     body = {
         "action": "loginWithPhone",
         "phoneNumber": phone_number,
@@ -45,9 +62,9 @@ def login_with_phone(phone_number: str):
     return resp
 
 
+@need_doorman_vars
 @router.post("/token")
 def login(form_data: OAuth2PasswordRequestForm = Depends()):
-    has_doorman_vars()
     body = {
         "action": "verifyCode",
         "phoneNumber": form_data.username,
