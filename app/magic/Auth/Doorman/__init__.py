@@ -39,6 +39,18 @@ def need_doorman_vars(f):
     return wrapper
 
 
+def need_firestore(f):
+    @wraps(f)
+    def wrapper(*args, **kwargs):
+        if not os.getenv("GOOGLE_APPLICATION_CREDENTIALS"):
+            raise DoormanAuthException(
+                message="You must supply a service account to use this endpoint!"
+            )
+        return f(*args, **kwargs)
+
+    return wrapper
+
+
 @router.post("/login_with_phone")
 @need_doorman_vars
 def login_with_phone(phone_number: str):
@@ -75,6 +87,7 @@ def login(form_data: OAuth2PasswordRequestForm = Depends()):
     return {"access_token": id_token, "token_type": "bearer"}
 
 
+@need_firestore
 async def get_current_user(token: str = Depends(oath2_scheme)):
     decoded = auth.verify_id_token(token)
     current_user = CurrentUser(**decoded)
