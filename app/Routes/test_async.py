@@ -7,9 +7,7 @@ from app.Models.TestUser import TestUser
 
 from app.magic import router
 
-from fastapi import Body, Depends
-
-from app.magic import get_current_user, CurrentUser, GET_USER
+from app.magic import CurrentUser, GET_USER
 
 
 @run_in_background

@@ -81,6 +81,6 @@ async def get_current_user(token: str = Depends(oath2_scheme)):
     return current_user
 
 
-@router.get("/get_current_user", response_model=CurrentUser)
-def get_current_user(current_user: CurrentUser = Depends(get_current_user)):
-    return current_user
+# @router.get("/get_current_user", response_model=CurrentUser)
+# def get_current_user(current_user: CurrentUser = Depends(get_current_user)):
+#     return current_user
