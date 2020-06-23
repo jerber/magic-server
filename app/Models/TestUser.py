@@ -1,4 +1,5 @@
 from magicdb.Models import MagicModel
+from pydantic import BaseModel
 
 
 class TestUser(MagicModel):

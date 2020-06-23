@@ -1,6 +1,8 @@
+import os
 from functools import wraps
 from fastapi import Request, Body
 from app.magic import router
+
 
 from app.magic.Globals.G import g
 from app.magic.Models.Task import Task, TaskParams
@@ -11,6 +13,7 @@ import json
 from datetime import datetime
 
 from app.magic.Utils.random_utils import random_str
+from app.magic.Errors import BackendException
 
 
 def run_in_background(f):
@@ -36,14 +39,17 @@ def run_in_background(f):
         j_params = json.loads(params)
         args = j_params.get("args", [])
         kwargs = j_params.get("kwargs", {})
-        print("fff inspect", inspect.signature(f), "a", args, "k", kwargs)
+        print("inspect", inspect.signature(f), "a", args, "k", kwargs)
 
         f(*args, **kwargs)
-        print(request.url)
         return {"success": True, "message": ""}
 
     @wraps(f)
     def wrapper(*args, **kwargs):
+        if not os.getenv("HasDB"):
+            raise BackendException(
+                message="You cannot add tasks if you do not add a DB!"
+            )
         print("given to function", "args", args, "kwargs", kwargs)
         task_params = TaskParams(args=list(args), kwargs=kwargs)
         task = Task(
