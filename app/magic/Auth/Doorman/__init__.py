@@ -39,19 +39,8 @@ def need_doorman_vars(f):
     return wrapper
 
 
-"""
-def has_doorman_vars():
-    doorman_vars = [LOCATION, PROJECT_ID, DOORMAN_ID]
-    if None in doorman_vars:
-        raise DoormanAuthException(
-            message="Not all Doorman credentials found in .env file. Need DOORMAN_PUBLIC_PROJECT_ID, "
-            "FIREBASE_PROJECT_ID, and CLOUD_FUNCTION_LOCATION"
-        )
-"""
-
-
-@need_doorman_vars
 @router.post("/login_with_phone")
+@need_doorman_vars
 def login_with_phone(phone_number: str):
     body = {
         "action": "loginWithPhone",
@@ -62,8 +51,8 @@ def login_with_phone(phone_number: str):
     return resp
 
 
-@need_doorman_vars
 @router.post("/token")
+@need_doorman_vars
 def login(form_data: OAuth2PasswordRequestForm = Depends()):
     body = {
         "action": "verifyCode",
