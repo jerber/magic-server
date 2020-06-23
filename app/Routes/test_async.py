@@ -7,8 +7,6 @@ from app.Models.TestUser import TestUser
 
 from app.magic import router
 
-from app.magic import CurrentUser, GET_USER
-
 
 @run_in_background
 @parse_objects
@@ -32,8 +30,3 @@ def test_async(*, secs: float = 5, test_user: TestUser):
 def test_async(*, secs: float = 5):
     task_id = sleep_for_five(secs)
     return {"task_id": task_id}
-
-
-@router.get("/hello")
-def hello(current_user: CurrentUser = GET_USER):
-    return current_user
