@@ -11,8 +11,10 @@ from app.magic import router
 
 @run_in_background
 @parse_objects
-def sleep_for_five(secs: float, test_user: TestUser):
+def sleep_for_five(secs: float, test_user: TestUser = None):
     print("starting to sleep for test user", test_user)
+    if not test_user:
+        TestUser(name="Jon", age=3)
     time.sleep(secs)
     test_user.slept = True
     test_user.save(merge=True)
@@ -27,5 +29,5 @@ def test_async(*, secs: float = 5, test_user: TestUser):
 
 @router.post("/test_async_without_firestore")
 def test_async(*, secs: float = 5):
-    task_id = sleep_for_five(secs, TestUser(name="Jon", age=2))
+    task_id = sleep_for_five(secs)
     return {"task_id": task_id}
