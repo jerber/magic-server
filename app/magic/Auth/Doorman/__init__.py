@@ -10,7 +10,7 @@ from app.magic import router
 from firebase_admin import auth
 
 from .errors import DoormanAuthException
-
+from app.magic.Decorators.firestore import need_firestore
 
 LOCATION, PROJECT_ID, DOORMAN_ID = (
     os.environ.get("CLOUD_FUNCTION_LOCATION", "us-central1"),
@@ -33,18 +33,6 @@ def need_doorman_vars(f):
             raise DoormanAuthException(
                 message="Not all Doorman credentials found in .env file. Need DOORMAN_PUBLIC_PROJECT_ID, "
                 "FIREBASE_PROJECT_ID, and CLOUD_FUNCTION_LOCATION"
-            )
-        return f(*args, **kwargs)
-
-    return wrapper
-
-
-def need_firestore(f):
-    @wraps(f)
-    def wrapper(*args, **kwargs):
-        if not os.getenv("GOOGLE_APPLICATION_CREDENTIALS"):
-            raise DoormanAuthException(
-                message="You must supply a service account to use this endpoint!"
             )
         return f(*args, **kwargs)
 
@@ -88,7 +76,7 @@ def login(form_data: OAuth2PasswordRequestForm = Depends()):
 
 
 @need_firestore
-async def get_current_user(token: str = Depends(oath2_scheme)):
+def get_current_user(token: str = Depends(oath2_scheme)):
     decoded = auth.verify_id_token(token)
     current_user = CurrentUser(**decoded)
     return current_user

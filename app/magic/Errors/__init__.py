@@ -1,1 +1,6 @@
-from .MagicExceptions import MagicException, BackendException, FrontendException
+from .MagicExceptions import (
+    MagicException,
+    BackendException,
+    FrontendException,
+    FirestoreException,
+)
