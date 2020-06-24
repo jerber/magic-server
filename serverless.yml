@@ -1,7 +1,9 @@
-service: firebase-lambda-test
+#service: firebase-lambda-test
+service: neww-lambda-test
+
 # app and org for use with dashboard.serverless.com
-app: firebase-lambda-test
-org: jerber
+#app: firebase-lambda-test
+#org: jerber
 
 provider:
   name: aws
@@ -19,6 +21,7 @@ provider:
 functions:
   app:
     handler: main.handler
+    package: {} # https://github.com/serverless/serverless/issues/6752
     events:
       - http: ANY /
       - http:
