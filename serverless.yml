@@ -21,6 +21,7 @@ provider:
 functions:
   app:
     handler: main.handler
+    warmup: true
     package: {} # https://github.com/serverless/serverless/issues/6752
     events:
       - http: ANY /
@@ -36,6 +37,7 @@ plugins:
   - serverless-apigwy-binary
   - serverless-apigw-binary
   - serverless-dotenv-plugin
+  - serverless-plugin-warmup
 
 
 package:
@@ -44,6 +46,11 @@ package:
     - venv/**
     - env/**
 
+iamRoleStatements:
+  - Effect: 'Allow'
+    Action:
+      - 'lambda:InvokeFunction'
+    Resource: "*"
 
 custom:
   pythonRequirements:
@@ -51,3 +58,5 @@ custom:
   apigwBinary:
     types:
       - '*/*'
+  warmup:
+    concurrency: 2 # Warm up 5 concurrent instances
