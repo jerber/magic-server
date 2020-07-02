@@ -63,9 +63,22 @@ def read_root(request: Request):
         return {}
 
     print("hello world!")
-    return {"Hello": "World", "cwd": Path.cwd(), "dir": os.listdir()}
+    return {
+        "Hello": "World",
+        "cwd": Path.cwd(),
+        "dir": os.listdir(),
+        "aws_event": aws_event,
+    }
 
 
 app.include_router(router)
 
-handler = Mangum(app, enable_lifespan=False)
+
+def handler(event, context):
+    if event.get("source") in ["aws.events", "serverless-plugin-warmup"]:
+        print("Lambda is warm!")
+        return {}
+
+    asgi_handler = Mangum(app)
+    response = asgi_handler(event, context)
+    return response
