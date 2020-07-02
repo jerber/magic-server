@@ -38,6 +38,7 @@ plugins:
   - serverless-apigw-binary
   - serverless-dotenv-plugin
   - serverless-plugin-warmup
+  - serverless-log-forwarding
 
 
 package:
@@ -45,6 +46,7 @@ package:
     - node_modules/**
     - venv/**
     - env/**
+    - magic_venv/**
 
 iamRoleStatements:
   - Effect: 'Allow'
@@ -60,3 +62,8 @@ custom:
       - '*/*'
   warmup:
     concurrency: 2 # Warm up 5 concurrent instances
+    prewarm: true
+
+  logForwarding:
+    destinationARN: arn:aws:lambda:us-east-1:444719859866:function:log-forwarder-prod-forwarder
+    filterPattern: "-\"[INFO]\" -\"RequestId\""
