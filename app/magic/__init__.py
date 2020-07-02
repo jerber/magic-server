@@ -52,22 +52,12 @@ async def add_process_time_header(request: Request, call_next):
 
 
 @app.get("/")
-def read_root(request: Request):
-    aws_event = request.scope.get("aws.event")
-    print("aws event", aws_event)
-    if aws_event and aws_event.get("source") in [
-        "aws.events",
-        "serverless-plugin-warmup",
-    ]:
-        print("Lambda is warm!")
-        return {}
-
+def read_root():
     print("hello world!")
     return {
         "Hello": "World",
         "cwd": Path.cwd(),
         "dir": os.listdir(),
-        "aws_event": aws_event,
     }
 
 
