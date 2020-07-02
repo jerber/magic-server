@@ -11,6 +11,11 @@ provider:
   timeout: 15
   tracing: # what does this do exactly?
     lambda: true
+  iamRoleStatements:
+    - Effect: 'Allow'
+      Action:
+        - 'lambda:InvokeFunction'
+      Resource: "*"
   environment:
     DOORMAN_PUBLIC_PROJECT_ID: ${env:DOORMAN_PUBLIC_PROJECT_ID}
     FIREBASE_PROJECT_ID: ${env:FIREBASE_PROJECT_ID}
@@ -48,11 +53,6 @@ package:
     - env/**
     - magic_venv/**
 
-iamRoleStatements:
-  - Effect: 'Allow'
-    Action:
-      - 'lambda:InvokeFunction'
-    Resource: "*"
 
 custom:
   pythonRequirements:
