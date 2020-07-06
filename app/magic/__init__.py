@@ -17,9 +17,7 @@ from app.magic.Globals.G import g
 
 # add auth here... for now hardcode but in future look to env variable for which auth...
 from .Auth import Doorman
-from .Auth.Doorman import get_current_user, CurrentUser
-
-GET_USER = Depends(get_current_user)
+from .Auth.Doorman import get_current_user, CurrentUser, GET_USER
 
 from app import Routes
 
@@ -55,7 +53,7 @@ async def add_process_time_header(request: Request, call_next):
 def read_root():
     print("hello world!")
     return {
-        "Hello": "World",
+        "Hello": "World!",
         "cwd": Path.cwd(),
         "dir": os.listdir(),
     }
