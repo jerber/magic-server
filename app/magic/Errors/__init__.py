@@ -3,4 +3,5 @@ from .MagicExceptions import (
     BackendException,
     FrontendException,
     FirestoreException,
+    TwilioException,
 )

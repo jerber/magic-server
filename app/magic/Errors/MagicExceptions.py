@@ -21,6 +21,10 @@ class FirestoreException(MagicException):
     pass
 
 
+class TwilioException(MagicException):
+    pass
+
+
 @app.exception_handler(MagicException)
 def backend_exception_handler(request: Request, exc: MagicException):
     return JSONResponse(

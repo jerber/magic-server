@@ -15,10 +15,6 @@ app = FastAPI() if os.environ.get("LOCAL") else FastAPI(root_path="/dev")
 
 from app.magic.Globals.G import g
 
-# add auth here... for now hardcode but in future look to env variable for which auth...
-from .Auth import Doorman
-from .Auth.Doorman import get_current_user, CurrentUser, GET_USER
-
 from app import Routes
 
 
