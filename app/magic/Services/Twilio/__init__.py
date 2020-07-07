@@ -11,7 +11,10 @@ MESSAGING_SERVICE_SID = os.environ.get("TWILIO_MESSAGING_SERVICE_SID")
 SID = os.environ.get("TWILIO_ACCOUNT_SID")
 AUTH_TOKEN = os.environ.get("TWILIO_AUTH_TOKEN")
 
-client = Client(SID, AUTH_TOKEN)
+try:
+    client = Client(SID, AUTH_TOKEN)
+except Exception as e:
+    print("Twilio SID or AUTH TOKEN not given.")
 
 FROM_NUMBER = os.environ.get("FROM_NUMBER")
 
