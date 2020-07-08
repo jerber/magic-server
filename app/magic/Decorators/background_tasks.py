@@ -19,7 +19,7 @@ from app.magic.Errors import BackendException
 def run_in_background(f):
     router_path = f"/run_in_background/{f.__name__}"
 
-    @router.post(router_path)
+    @router.post(router_path, tags=['background_tasks'])
     def endpoint(
         request: Request,
         task_id: str = Body(...),

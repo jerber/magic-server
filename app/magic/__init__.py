@@ -11,7 +11,8 @@ from . import config
 router = APIRouter()
 
 
-app = FastAPI() if os.environ.get("LOCAL") else FastAPI(root_path="/dev")
+# app = FastAPI() if os.environ.get("LOCAL") else FastAPI(root_path="/dev")
+app = FastAPI()
 
 from app.magic.Globals.G import g
 
@@ -45,11 +46,11 @@ async def add_process_time_header(request: Request, call_next):
     return response
 
 
-@app.get("/")
+@app.get("/", tags=['boilerplate'])
 def read_root():
     print("hello world!")
     return {
-        "Hello": "World!",
+        "Hello": "Worlda!",
         "cwd": Path.cwd(),
         "dir": os.listdir(),
     }

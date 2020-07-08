@@ -13,4 +13,4 @@ def send_text_router(phone_number: PhoneNumber, body: str):
 
 from app.magic import app
 
-app.include_router(r, prefix="/text", tags=["text"])
+app.include_router(r, prefix="/text", tags=["boilerplate"])

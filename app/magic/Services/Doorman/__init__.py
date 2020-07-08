@@ -39,7 +39,7 @@ def need_doorman_vars(f):
     return wrapper
 
 
-@router.post("/login_with_phone")
+@router.post("/login_with_phone", tags=['Doorman'])
 @need_doorman_vars
 def login_with_phone(phone_number: str):
     body = {
@@ -51,7 +51,7 @@ def login_with_phone(phone_number: str):
     return resp
 
 
-@router.post("/token")
+@router.post("/token", tags=['Doorman'])
 @need_doorman_vars
 def login(form_data: OAuth2PasswordRequestForm = Depends()):
     body = {

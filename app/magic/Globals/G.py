@@ -33,7 +33,8 @@ class G:
         url = str(self.request.url)
         path = self.request.url.path
         url = url[: url.rindex(path)]
-        url = url if os.environ.get("LOCAL") else url + "/dev"
+        #TODO figure this out...
+        # url = url if os.environ.get("LOCAL") else url + "/dev"
         return url
 
     @property
