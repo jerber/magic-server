@@ -21,7 +21,9 @@ LOCATION, PROJECT_ID, DOORMAN_ID = (
 ID_TOKEN_ENDPOINT: str = f"https://{LOCATION}-{PROJECT_ID}.cloudfunctions.net/getIdToken"
 DOORMAN_BACKEND_ENDPOINT: str = "https://sending-messages-for-doorman.herokuapp.com/phoneLogic"
 
-token_url = "/token" if os.environ.get("LOCAL") else "/dev/token"
+# TODO another /dev problem
+# token_url = "/token" if os.environ.get("LOCAL") else "/dev/token"
+token_url = "/token"
 oath2_scheme = OAuth2PasswordBearer(tokenUrl=token_url)
 
 
@@ -39,7 +41,7 @@ def need_doorman_vars(f):
     return wrapper
 
 
-@router.post("/login_with_phone", tags=['Doorman'])
+@router.post("/login_with_phone", tags=["Doorman"])
 @need_doorman_vars
 def login_with_phone(phone_number: str):
     body = {
@@ -51,7 +53,7 @@ def login_with_phone(phone_number: str):
     return resp
 
 
-@router.post("/token", tags=['Doorman'])
+@router.post("/token", tags=["Doorman"])
 @need_doorman_vars
 def login(form_data: OAuth2PasswordRequestForm = Depends()):
     body = {
