@@ -15,9 +15,17 @@ provider:
     - Effect: 'Allow'
       Action:
         - 'lambda:InvokeFunction'
+        - dynamodb:Query
+        - dynamodb:Scan
+        - dynamodb:GetItem
+        - dynamodb:PutItem
+        - dynamodb:UpdateItem
+        - dynamodb:DeleteItem
       Resource: "*"
   environment:
-    #DOORMAN
+    # DYNAMO
+    TASKS_TABLE: ${env:TASKS_TABLE_NAME}
+    # DOORMAN
     DOORMAN_PUBLIC_PROJECT_ID: ${env:DOORMAN_PUBLIC_PROJECT_ID}
     FIREBASE_PROJECT_ID: ${env:FIREBASE_PROJECT_ID}
     CLOUD_FUNCTION_LOCATION: ${env:CLOUD_FUNCTION_LOCATION}
@@ -26,7 +34,8 @@ provider:
     TWILIO_AUTH_TOKEN: ${env:TWILIO_AUTH_TOKEN}
     TWILIO_MESSAGING_SERVICE_SID: ${env:TWILIO_MESSAGING_SERVICE_SID}
     FROM_NUMBER: ${env:FROM_NUMBER}
-
+    # SEGMENT
+    SEGMENT_WRITE_KEY: ${env:SEGMENT_WRITE_KEY}
 
 functions:
   app:
@@ -44,8 +53,8 @@ functions:
 
 plugins:
   - serverless-python-requirements
-  - serverless-apigwy-binary
-  - serverless-apigw-binary
+#  - serverless-apigwy-binary
+#  - serverless-apigw-binary
   - serverless-dotenv-plugin
   - serverless-plugin-warmup
   - serverless-log-forwarding
@@ -58,14 +67,16 @@ package:
     - venv/**
     - env/**
     - magic_venv/**
+    - .env
 
 
 custom:
+#  tasksTableName: ${env:TASKS_TABLE_NAME}
   pythonRequirements:
     dockerizePip: non-linux
-  apigwBinary: # check if necessary by changing the Mangum binary response: https://mangum.io/http/
-    types:
-      - '*/*'
+#  apigwBinary: # check if necessary by changing the Mangum binary response: https://mangum.io/http/
+#    types:
+#      - '*/*'
   warmup:
     concurrency: 2 # Warm up 5 concurrent instances
     prewarm: true
@@ -79,3 +90,21 @@ custom:
     basePath: ''
     stage: ${self:provider.stage}
     createRoute53Record: true
+
+
+resources:
+  Resources:
+    UsersDynamoDBTable:
+      Type: 'AWS::DynamoDB::Table'
+      Properties:
+#        TableName: ${self:custom.tasksTableName}
+        TableName: ${env:TASKS_TABLE_NAME}
+        AttributeDefinitions:
+          -
+            AttributeName: task_id
+            AttributeType: S
+        KeySchema:
+          -
+            AttributeName: task_id
+            KeyType: HASH
+        BillingMode: PAY_PER_REQUEST

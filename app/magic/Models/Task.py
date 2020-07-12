@@ -8,6 +8,7 @@ class TaskParams(MagicModel):
 
 # for now cannot accept an object that does not have the dict ability...
 class Task(DateModel):
+    task_id: str
     url: str
     status: str
     sent: bool
