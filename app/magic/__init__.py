@@ -4,15 +4,25 @@ import os
 from fastapi import FastAPI, APIRouter, Request, Depends
 from fastapi.middleware.cors import CORSMiddleware
 from mangum import Mangum
+from starlette.responses import RedirectResponse
 
 from . import config
 
 
 router = APIRouter()
 
-
+# TODO /dev problem
 # app = FastAPI() if os.environ.get("LOCAL") else FastAPI(root_path="/dev")
-app = FastAPI()
+# app = FastAPI(openapi_url="/dev/openapi.json", version='0.0.1')
+app = FastAPI(openapi_url="/dev/openapi.json")  # This worked w double dev for redirect
+# app = FastAPI()
+# app = FastAPI(root_path="/dev")
+# app = FastAPI(
+#     servers=[
+#         {"url": "/", "description": "Current environment"},
+#         {"url": "/dev", "description": "Dev env"},
+#     ],
+# )
 
 from app.magic.Globals.G import g
 
@@ -27,13 +37,16 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# TODO tell if it is coming from the amazon given url, and if it is, append the dev??
+
 
 @app.middleware("http")
 async def add_process_time_header(request: Request, call_next):
     start_time = time.time()
     g.request = request
     g.app = app
-    print("url path", request.url.path)
+    print("path params", request.path_params)
+    print("url path", request.url.path, "***url", request.url)
     response = await call_next(request)
     # also process the Tasks now
     start_tasks = time.time()
@@ -46,7 +59,16 @@ async def add_process_time_header(request: Request, call_next):
     return response
 
 
-@app.get("/", tags=['boilerplate'])
+@app.get("/openapi.json")
+def dev_docs():
+    print("you are being redirected now...")
+    message = "hi there!"
+    print(message)
+    response = RedirectResponse(url="/dev/dev/openapi.json")
+    return response
+
+
+@app.get("/", tags=["boilerplate"])
 def read_root():
     print("hello world!")
     return {
