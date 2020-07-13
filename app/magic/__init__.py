@@ -11,7 +11,9 @@ from . import config
 router = APIRouter()
 
 app = FastAPI(
-    version="0.0.1", root_path="" if os.getenv("LOCAL") else f'/{os.getenv("STAGE")}'
+    title="GOAT SERVER",
+    version="0.0.1",
+    root_path="" if os.getenv("LOCAL") else f'/{os.getenv("STAGE")}',
 )
 
 from app.magic.Globals.G import g
