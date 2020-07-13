@@ -33,8 +33,7 @@ class G:
         url = str(self.request.url)
         path = self.request.url.path
         url = url[: url.rindex(path)]
-        #TODO figure this out...
-        # url = url if os.environ.get("LOCAL") else url + "/dev"
+        url = url if os.environ.get("LOCAL") else url + f"/{os.getenv('STAGE')}"
         return url
 
     @property

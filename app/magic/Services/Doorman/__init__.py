@@ -11,6 +11,7 @@ from firebase_admin import auth
 
 from .errors import DoormanAuthException
 from app.magic.Decorators.firestore import need_firestore
+from app.magic.FieldTypes import PhoneNumber
 
 LOCATION, PROJECT_ID, DOORMAN_ID = (
     os.environ.get("CLOUD_FUNCTION_LOCATION", "us-central1"),
@@ -21,9 +22,7 @@ LOCATION, PROJECT_ID, DOORMAN_ID = (
 ID_TOKEN_ENDPOINT: str = f"https://{LOCATION}-{PROJECT_ID}.cloudfunctions.net/getIdToken"
 DOORMAN_BACKEND_ENDPOINT: str = "https://sending-messages-for-doorman.herokuapp.com/phoneLogic"
 
-# TODO another /dev problem
-# token_url = "/token" if os.environ.get("LOCAL") else "/dev/token"
-token_url = "/token"
+token_url = "/token" if os.getenv("LOCAL") else f"/{os.getenv('STAGE')}/token"
 oath2_scheme = OAuth2PasswordBearer(tokenUrl=token_url)
 
 
@@ -43,7 +42,7 @@ def need_doorman_vars(f):
 
 @router.post("/login_with_phone", tags=["Doorman"])
 @need_doorman_vars
-def login_with_phone(phone_number: str):
+def login_with_phone(phone_number: PhoneNumber):
     body = {
         "action": "loginWithPhone",
         "phoneNumber": phone_number,
