@@ -14,7 +14,16 @@ router = APIRouter()
 # TODO /dev problem
 # app = FastAPI() if os.environ.get("LOCAL") else FastAPI(root_path="/dev")
 # app = FastAPI(openapi_url="/dev/openapi.json", version='0.0.1')
-app = FastAPI(openapi_url="/dev/openapi.json")  # This worked w double dev for redirect
+# app = FastAPI(
+#     openapi_url=f"/{os.getenv('STAGE')}/openapi.json", version="0.0.1", root_path='/dev'
+# )  # This worked w double dev for redirect
+
+print("LOCAL", os.getenv('LOCAL'))
+app = FastAPI(
+    version="0.0.1", root_path='' if os.getenv('LOCAL') else os.getenv('STAGE')
+    # version="0.0.1", openapi_prefix='/dev'
+)
+
 # app = FastAPI()
 # app = FastAPI(root_path="/dev")
 # app = FastAPI(
@@ -58,15 +67,28 @@ async def add_process_time_header(request: Request, call_next):
     response.headers["X-Process-Time"] = str(process_time)
     return response
 
-
+'''
 @app.get("/openapi.json")
 def dev_docs():
     print("you are being redirected now...")
     message = "hi there!"
     print(message)
-    response = RedirectResponse(url="/dev/dev/openapi.json")
+    url = f"/{os.getenv('STAGE')}/{os.getenv('STAGE')}/openapi.json"
+    print("url to redirect", url)
+    response = RedirectResponse(url=url)
     return response
 
+
+@app.get("/dev/openapi.json")
+def devvv_docs():
+    print("IN DEVyou are being redirected now...")
+    message = "hi there!"
+    print(message)
+    url = f"/openapi.json"
+    print("url to redirect", url)
+    response = RedirectResponse(url=url)
+    return response
+'''
 
 @app.get("/", tags=["boilerplate"])
 def read_root():
@@ -86,6 +108,6 @@ def handler(event, context):
         print("Lambda is warm!")
         return {}
 
-    asgi_handler = Mangum(app)
+    asgi_handler = Mangum(app, api_gateway_base_path=os.getenv('STAGE'))
     response = asgi_handler(event, context)
     return response

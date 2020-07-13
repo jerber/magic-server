@@ -8,6 +8,7 @@ service: neww-lambda-test
 provider:
   name: aws
   runtime: python3.8
+  stage: ${env:STAGE, 'dev'}
   timeout: 15
   tracing: # what does this do exactly?
     lambda: true
@@ -36,6 +37,8 @@ provider:
     FROM_NUMBER: ${env:FROM_NUMBER}
     # SEGMENT
     SEGMENT_WRITE_KEY: ${env:SEGMENT_WRITE_KEY}
+    # STAGE
+    STAGE: ${env:STAGE}
 
 functions:
   app:
