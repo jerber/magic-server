@@ -90,10 +90,8 @@ custom:
 
   customDomain:
     domainName: jeremyberman.org
-#    basePath: ${self:provider.stage}
     basePath: ''
     stage: ${self:provider.stage}
-#    stage: 'dev'
     createRoute53Record: true
 
 
