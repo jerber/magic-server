@@ -49,23 +49,20 @@ def get_current_user(current_user: CurrentUser = GET_USER):
 
 """Adding to DynamoDB Table."""
 
-import boto3
-import os
 from app.magic.Models.Task import Task
 from fastapi.encoders import jsonable_encoder
-
-TASKS_TABLE = os.environ.get("TASKS_TABLE_NAME")
-dynamodb = boto3.resource("dynamodb")
+from typing import List
 
 
 @router.post("/test_dynamo", tags=["boilerplate"])
-def test_dynamo(task: Task):
+def test_dynamo(tasks: List[Task]):
     start = time.time()
-    table = dynamodb.Table(TASKS_TABLE)
-    table.put_item(Item=jsonable_encoder(task))
+    with Task.get_table().batch_writer() as batch:
+        for task in tasks:
+            batch.put_item(Item=jsonable_encoder(task))
     time_took = time.time() - start
 
-    return {"task_id": task.task_id, "time_took": time_took}
+    return {"task_ids": [task.task_id for task in tasks], "time_took": time_took}
 
 
 """Errors example."""

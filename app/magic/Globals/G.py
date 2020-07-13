@@ -64,7 +64,7 @@ class G:
             saved_tasks.append(task)
             count += 1
         batch.commit()
-        if os.environ.get("LOCAL"):
+        if os.getenv("LOCAL"):
             for task in saved_tasks:
                 threading.Thread(target=self.run_tasks_locally, args=(task,)).start()
 

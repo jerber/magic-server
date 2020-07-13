@@ -1,4 +1,12 @@
+import os
+import boto3
+
 from magicdb.Models import DateModel, MagicModel
+
+
+TASKS_TABLE = os.environ.get("TASKS_TABLE_NAME")
+dynamodb = boto3.resource("dynamodb")
+table = dynamodb.Table(TASKS_TABLE)
 
 
 class TaskParams(MagicModel):
@@ -17,3 +25,7 @@ class Task(DateModel):
 
     class Meta:
         collection_name = "_tasks"
+
+    @staticmethod
+    def get_table():
+        return table
