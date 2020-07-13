@@ -27,7 +27,12 @@ def run_in_background(f):
         params: str = Body(...),
     ):
         print("endpoint just received!", "params", params)
-        task = Task.collection.get(task_id)
+        # get the task from dynamo
+        response = Task.get_table().get_item(Key={"task_id": task_id})
+        task_dict = response.get("Item")
+        if not task_dict:
+            raise HTTPException(status_code=404, detail="Invalid task id.")
+        task = Task(**task_dict)
         if not task or secret_token != task.secret_token:
             raise HTTPException(status_code=404, detail="Invalid task request.")
 
@@ -63,6 +68,6 @@ def run_in_background(f):
         )
         g.tasks.append(task)
 
-        return task.id
+        return task.task_id
 
     return wrapper
