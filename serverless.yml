@@ -1,5 +1,5 @@
 #service: firebase-lambda-test
-service: neww-lambda-test
+service: fourth-attempt
 
 # app and org for use with dashboard.serverless.com
 #app: firebase-lambda-test
@@ -22,6 +22,7 @@ provider:
         - dynamodb:PutItem
         - dynamodb:UpdateItem
         - dynamodb:DeleteItem
+        - dynamodb:BatchWriteItem
       Resource: "*"
   environment:
     # DYNAMO
@@ -97,7 +98,7 @@ custom:
 
 resources:
   Resources:
-    UsersDynamoDBTable:
+    TasksDynamoDBTable:
       Type: 'AWS::DynamoDB::Table'
       Properties:
 #        TableName: ${self:custom.tasksTableName}
@@ -111,3 +112,5 @@ resources:
             AttributeName: task_id
             KeyType: HASH
         BillingMode: PAY_PER_REQUEST
+        StreamSpecification:
+          StreamViewType: NEW_IMAGE

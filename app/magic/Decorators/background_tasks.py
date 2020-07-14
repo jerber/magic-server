@@ -32,6 +32,7 @@ def run_in_background(f):
         task_dict = response.get("Item")
         if not task_dict:
             raise HTTPException(status_code=404, detail="Invalid task id.")
+
         task = Task(**task_dict)
         if not task or secret_token != task.secret_token:
             raise HTTPException(status_code=404, detail="Invalid task request.")
@@ -57,13 +58,15 @@ def run_in_background(f):
             )
         print("given to function", "args", args, "kwargs", kwargs)
         task_params = TaskParams(args=list(args), kwargs=kwargs)
+        now = datetime.utcnow()
         task = Task(
             task_id=random_str(30),
             url=g.base_url + router_path,
             status="queued",
             sent=False,
             secret_token=random_str(50),
-            created_at=datetime.utcnow(),
+            created_at=now,
+            last_updated=now,
             params=task_params.json(),
         )
         g.tasks.append(task)
