@@ -49,7 +49,6 @@ class G:
     def run_tasks_locally(self, task):
         # make a dict but make sure dates are properly parsed
         d = json.loads(task.json())
-        # d["task_id"] = task.id
         resp = requests.post(task.url, json=d)
         print("og resp", resp.content)
         print("resp from local task", resp.content)
