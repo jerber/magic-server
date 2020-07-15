@@ -87,6 +87,14 @@ def test_segment(id: str, action, body: dict):
     return "done!"
 
 
+"""Query Params Example"""
+
+
+@router.get("/query_params_test", tags=["boilerplate"])
+def query_params(name: str):
+    return f"hello {name}"
+
+
 """Twilio Example"""
 
 from app.magic.Services.Twilio import send_text

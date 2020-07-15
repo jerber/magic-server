@@ -17,21 +17,16 @@ class CallRoute(APIRoute):
         original_route_handler = super().get_route_handler()
 
         async def custom_route_handler(request: Request) -> Response:
-            response: Response = await original_route_handler(request)
-            make_call_from_request_and_response(request, response)
-            """
-            print("rrororooro", response)
-            print("BODY", response.body)
-            print(dir(response))
-            print("ddddddd", response.__dict__)
-            duration = time.time() - before
-            response.headers["X-Response-Time"] = str(duration)
-            response.headers["X-SPAKL-Time"] = str(duration)
-
-            print(f"route duration: {duration}")
-            print(f"route response: {response}")
-            print(f"route response headers: {response.headers}")
-            """
+            response = None
+            error = None
+            try:
+                response: Response = await original_route_handler(request)
+            except Exception as e:
+                print("Error in call route", e.__dict__)
+                error = e
+            await make_call_from_request_and_response(request, response, error)
+            if error:
+                raise error
             return response
 
         return custom_route_handler
@@ -67,7 +62,6 @@ async def add_process_time_header(request: Request, call_next):
     g.app = app
     print("url path", request.url.path, "***url", request.url)
     response = await call_next(request)
-    # make_call_from_request_and_response(request, response)
     # also process the Tasks now
     start_tasks = time.time()
     if g.tasks:
