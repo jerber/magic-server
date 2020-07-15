@@ -1,14 +1,44 @@
 from pathlib import Path
 import time
 import os
-from fastapi import FastAPI, APIRouter, Request, Depends
+from fastapi import FastAPI, APIRouter, Request, Response
+from fastapi.routing import APIRoute
+
 from fastapi.middleware.cors import CORSMiddleware
 from mangum import Mangum
+from app.magic.Models.Call import make_call_from_request_and_response
+from typing import Callable
 
 from . import config
 
 
-router = APIRouter()
+class CallRoute(APIRoute):
+    def get_route_handler(self) -> Callable:
+        original_route_handler = super().get_route_handler()
+
+        async def custom_route_handler(request: Request) -> Response:
+            response: Response = await original_route_handler(request)
+            make_call_from_request_and_response(request, response)
+            """
+            print("rrororooro", response)
+            print("BODY", response.body)
+            print(dir(response))
+            print("ddddddd", response.__dict__)
+            duration = time.time() - before
+            response.headers["X-Response-Time"] = str(duration)
+            response.headers["X-SPAKL-Time"] = str(duration)
+
+            print(f"route duration: {duration}")
+            print(f"route response: {response}")
+            print(f"route response headers: {response.headers}")
+            """
+            return response
+
+        return custom_route_handler
+
+
+router = APIRouter(route_class=CallRoute)
+# router = APIRouter()
 
 app = FastAPI(
     title="GOAT SERVER",
@@ -37,6 +67,7 @@ async def add_process_time_header(request: Request, call_next):
     g.app = app
     print("url path", request.url.path, "***url", request.url)
     response = await call_next(request)
+    # make_call_from_request_and_response(request, response)
     # also process the Tasks now
     start_tasks = time.time()
     if g.tasks:
