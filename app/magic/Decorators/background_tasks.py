@@ -37,7 +37,7 @@ def run_in_background(f):
         if not task or secret_token != task.secret_token:
             raise HTTPException(status_code=404, detail="Invalid task request.")
 
-        if task.status == "done":
+        if task.status != "in-lambda":
             raise HTTPException(
                 status_code=404, detail="This task was already completed."
             )
