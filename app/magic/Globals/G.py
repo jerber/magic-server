@@ -1,4 +1,6 @@
 import os
+import time
+
 from fastapi import FastAPI, Request
 from fastapi.encoders import jsonable_encoder
 
@@ -8,6 +10,7 @@ import requests
 import threading
 
 from app.magic.Models.Task import Task
+from app.magic.config import settings
 
 
 class G:
@@ -37,7 +40,7 @@ class G:
         url = str(self.request.url)
         path = self.request.url.path
         url = url[: url.rindex(path)]
-        url = url if os.environ.get("LOCAL") else url + f"/{os.getenv('STAGE')}"
+        url = url if settings.local else url + f"/{settings.stage}"
         return url
 
     @property
@@ -56,8 +59,9 @@ class G:
     def save_tasks(self):
         """This will have a limit of 25 background tasks at a time... or 16MB"""
         if not self.tasks:
-            return
+            return 0
 
+        start = time.time()
         count = 0
         saved_tasks = []
         with Task.get_table().batch_writer() as batch:
@@ -67,9 +71,10 @@ class G:
                 saved_tasks.append(task)
                 count += 1
 
-        if os.getenv("LOCAL"):
+        if settings.local:
             for task in saved_tasks:
                 threading.Thread(target=self.run_tasks_locally, args=(task,)).start()
+        return time.time() - start
 
     def save_tasks_with_firestore(self):
         """This will have a limit of 500 background tasks at a time..."""

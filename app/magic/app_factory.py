@@ -27,14 +27,3 @@ def create_app(config_settings=settings):
 
 
 app = create_app()
-
-
-def create_route():
-    router = APIRouter()
-    return router
-
-
-default_router = create_route()
-print("defualt router", default_router)
-app.include_router(default_router)
-print(app.__dict__)

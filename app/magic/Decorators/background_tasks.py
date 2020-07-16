@@ -1,11 +1,9 @@
 import os
 from functools import wraps
 from fastapi import Request, Body
-from fastapi import APIRouter
 
 from app.magic import background_router
 
-from app.magic.app_factory import app, default_router
 
 from app.magic.Globals.G import g
 from app.magic.Models.Task import Task, TaskParams
@@ -18,17 +16,9 @@ from datetime import datetime
 from app.magic.Utils.random_utils import random_str
 from app.magic.Errors import BackendException
 
-# background_router = APIRouter()
-# app = create_app()
-# print("app hjere", app)
-
-print("default router in backgeound", default_router)
-
 
 def run_in_background(f):
     router_path = f"/run_in_background/{f.__name__}"
-
-    print("in run in background", router_path)
 
     @background_router.post(router_path, tags=["background_tasks"])
     def endpoint(
@@ -85,8 +75,3 @@ def run_in_background(f):
         return task.task_id
 
     return wrapper
-
-
-# print("incluide router")
-# app.include_router(default_router)
-# print(app)
