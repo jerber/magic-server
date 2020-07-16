@@ -40,10 +40,12 @@ def run_in_background(f):
         if not task or secret_token != task.secret_token:
             raise HTTPException(status_code=404, detail="Invalid task request.")
 
+        print("task status", task.status, task_dict)
         if task.status != "in-lambda":
-            raise HTTPException(
-                status_code=404, detail="This task was already completed."
-            )
+            if not task.local:
+                raise HTTPException(
+                    status_code=404, detail="This task was already completed."
+                )
 
         j_params = json.loads(params)
         args = j_params.get("args", [])
@@ -73,7 +75,6 @@ def run_in_background(f):
             params=task_params.json(),
             local=settings.local,
         )
-        print("TASK APPENDING HERE...")
         g.tasks.append(task)
 
         return task.task_id

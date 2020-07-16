@@ -10,6 +10,7 @@ from typing import Optional
 from app.magic.Utils.random_utils import random_str
 
 from app.magic.Decorators.background_tasks import run_in_background
+from app.magic.Decorators.parse_objects import parse_objects
 
 
 class Error(BaseModel):
@@ -52,7 +53,9 @@ class Call(DateModel):
 
 
 @run_in_background
+@parse_objects
 def save_call(call: Call):
+    print("IN SAVE CALLLL NOW")
     call.save()
 
 
@@ -101,4 +104,5 @@ async def make_call_from_request_and_response(
         times=Times(**times_dict),
     )
 
-    call.save()
+    # call.save()
+    save_call(call)
