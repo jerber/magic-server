@@ -2,7 +2,8 @@ from app.magic.Utils.importing import get_all_subfiles_and_dirs
 
 from fastapi import APIRouter
 
-from app.magic import app
+# from app.magic import app
+from app.magic.app_factory import app
 
 sub_router = APIRouter()
 

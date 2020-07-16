@@ -2,11 +2,11 @@ import os
 import boto3
 
 from magicdb.Models import DateModel, MagicModel
+from app.magic.config import settings
 
 
-TASKS_TABLE = os.environ.get("TASKS_TABLE_NAME")
 dynamodb = boto3.resource("dynamodb")
-table = dynamodb.Table(TASKS_TABLE)
+table = dynamodb.Table(settings.tasks_table_name)
 
 
 class TaskParams(MagicModel):

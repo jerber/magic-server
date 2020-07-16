@@ -1,58 +1,57 @@
 from pathlib import Path
 import time
 import os
-from fastapi import FastAPI, APIRouter, Request, Response
-from fastapi.routing import APIRoute
+from fastapi import FastAPI, APIRouter, Request
+from fastapi.responses import JSONResponse
 
 from fastapi.middleware.cors import CORSMiddleware
 from mangum import Mangum
-from app.magic.Models.Call import make_call_from_request_and_response
-from typing import Callable
 
-from . import config
+# from . import config
+from .config import settings
+from app.magic.app_factory import app
+
+background_router = APIRouter()
+from app.magic.Decorators.background_tasks import run_in_background
+
+app.include_router(background_router)
+
+from app.magic.Errors.MagicExceptions import MagicException
+
+# from app.magic.Models.Call import make_call_from_request_and_response
 
 
-class CallRoute(APIRoute):
-    def get_route_handler(self) -> Callable:
-        original_route_handler = super().get_route_handler()
+from app.magic.Utils.middleware import CallRoute
 
-        async def custom_route_handler(request: Request) -> Response:
-            response = None
-            error = None
-            try:
-                response: Response = await original_route_handler(request)
-            except Exception as e:
-                print("Error in call route", e.__dict__)
-                error = e
-            await make_call_from_request_and_response(request, response, error)
-            if error:
-                raise error
-            return response
 
-        return custom_route_handler
+# from app.magic.app_factory import create_app
 
+
+# app = create_app()
+
+
+# @app.exception_handler(MagicException)
+# def backend_exception_handler(request: Request, exc: MagicException):
+#     return JSONResponse(
+#         status_code=exc.status_code,
+#         content={"success": False, "message": f"{exc.message}"},
+#     )
 
 router = APIRouter(route_class=CallRoute)
 # router = APIRouter()
-
-app = FastAPI(
-    title="GOAT SERVER",
-    version="0.0.1",
-    root_path="" if os.getenv("LOCAL") else f'/{os.getenv("STAGE")}',
-)
 
 from app.magic.Globals.G import g
 
 from app import Routes
 
 
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
+# app.add_middleware(
+#     CORSMiddleware,
+#     allow_origins=["*"],
+#     allow_credentials=True,
+#     allow_methods=["*"],
+#     allow_headers=["*"],
+# )
 
 
 @app.middleware("http")
@@ -83,7 +82,19 @@ def read_root():
     }
 
 
+@background_router.get("/baccckk")
+def backk():
+    return "back"
+
+
+print("app in magic", app)
 app.include_router(router)
+app.include_router(background_router)
+print("def apppp", app.__dict__)
+print("routttaa", app.router.__dict__)
+for route in app.router.routes:
+    print(route.__dict__)
+    print("\n\n")
 
 
 def handler(event, context):
