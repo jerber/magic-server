@@ -1,4 +1,3 @@
-import os
 import analytics
 
 from app.magic.config import settings

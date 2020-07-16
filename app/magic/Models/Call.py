@@ -12,6 +12,8 @@ from app.magic.Utils.random_utils import random_str
 from app.magic.Decorators.background_tasks import run_in_background
 from app.magic.Decorators.parse_objects import parse_objects
 
+from app.magic.config import settings
+
 
 class Error(BaseModel):
     error_class: str
@@ -64,6 +66,8 @@ async def make_call_from_request_and_response(
     error: Optional[Exception],
     times_dict: dict,
 ):
+    if not settings.save_calls:
+        return
     body_json = await request.body() or None
     request_obj = Request(
         request_id=random_str(30),
@@ -95,6 +99,7 @@ async def make_call_from_request_and_response(
 
     # TODO what if error.__Dict is not json encodable... must check that before...
     # or maybe wrap this whole thing w a try catch just in case so it does not fuck up everything else
+    # will do this once I test this out for a while... prob
 
     call = Call(
         request=request_obj,
@@ -103,5 +108,4 @@ async def make_call_from_request_and_response(
         times=Times(**times_dict),
     )
 
-    # call.save()
     save_call(call)

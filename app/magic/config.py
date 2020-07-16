@@ -2,8 +2,6 @@ from pathlib import Path
 import os
 from pydantic import BaseSettings
 
-# from dotenv import load_dotenv
-
 
 def get_service_account_path(service_account_name):
     """Tries to get the google account credentials service account json in either
@@ -73,10 +71,15 @@ class Settings(BaseSettings):
     # for routing
     stage: str = "dev"
 
+    # for saving calls
+    save_calls: bool = True
+
     class Config:
         env_file = env_path
 
 
+# If you want to make the env variables from .env available
+# from dotenv import load_dotenv
 # if os.path.exists(env_path):
 #     load_dotenv(env_path)
 

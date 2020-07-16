@@ -76,6 +76,6 @@ def handler(event, context):
         print("Lambda is warm!")
         return {}
 
-    asgi_handler = Mangum(app, api_gateway_base_path=os.getenv("STAGE"))
+    asgi_handler = Mangum(app, api_gateway_base_path=settings.stage)
     response = asgi_handler(event, context)
     return response

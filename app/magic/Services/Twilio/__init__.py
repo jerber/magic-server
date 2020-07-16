@@ -5,11 +5,6 @@ from app.magic.config import settings
 
 from app.magic.Errors import TwilioException
 
-# STATUS_CALLBACK = os.environ.get("TWILIO_STATUS_CALLBACK")
-# MESSAGING_SERVICE_SID = os.environ.get("TWILIO_MESSAGING_SERVICE_SID")
-
-# SID = os.environ.get("TWILIO_ACCOUNT_SID")
-# AUTH_TOKEN = os.environ.get("TWILIO_AUTH_TOKEN")
 
 try:
     client = Client(settings.twilio_account_sid, settings.twilio_auth_token)

@@ -1,8 +1,6 @@
 from fastapi import Request
 
-# from app.magic import app
-# from app.magic.app_factory import create_app
-from app.magic.app_factory import app
+from app.magic import app
 
 from fastapi.responses import JSONResponse
 
@@ -27,9 +25,6 @@ class FirestoreException(MagicException):
 
 class TwilioException(MagicException):
     pass
-
-
-# app = create_app()
 
 
 @app.exception_handler(MagicException)

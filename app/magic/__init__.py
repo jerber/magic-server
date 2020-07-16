@@ -1,3 +1,4 @@
+"""Imports the Routes and the app and glues them all together"""
 from fastapi import APIRouter
 
 from .config import settings
