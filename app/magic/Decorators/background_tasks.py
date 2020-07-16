@@ -16,6 +16,8 @@ from datetime import datetime
 from app.magic.Utils.random_utils import random_str
 from app.magic.Errors import BackendException
 
+from app.magic.config import settings
+
 
 def run_in_background(f):
     router_path = f"/run_in_background/{f.__name__}"
@@ -69,7 +71,9 @@ def run_in_background(f):
             created_at=now,
             last_updated=now,
             params=task_params.json(),
+            local=settings.local,
         )
+        print("TASK APPENDING HERE...")
         g.tasks.append(task)
 
         return task.task_id

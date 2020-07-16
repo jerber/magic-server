@@ -22,6 +22,7 @@ class Task(DateModel):
     sent: bool
     secret_token: str
     params: str = None
+    local: bool
 
     class Meta:
         collection_name = "_tasks"

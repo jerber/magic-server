@@ -59,6 +59,7 @@ class G:
     def save_tasks(self):
         """This will have a limit of 25 background tasks at a time... or 16MB"""
         if not self.tasks:
+            print("HAVE NO TASKS")
             return 0
 
         start = time.time()
