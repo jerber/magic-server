@@ -1,6 +1,7 @@
 from functools import wraps
 from pydantic import BaseModel
 import inspect
+from app.magic.config import settings
 
 
 def parse_objects(f):
@@ -24,7 +25,8 @@ def parse_objects(f):
             ):
                 kwargs[var_name] = this_class.parse_obj(var_val)
 
-        print("PARSE OBJS", "args", args, "kwargs", kwargs)
+        if settings.print_level > 1:
+            print("PARSE OBJS", "args", args, "kwargs", kwargs)
         return f(*args, **kwargs)
 
     return wrapper

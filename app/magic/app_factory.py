@@ -56,7 +56,6 @@ def add_addons(new_app):
 
 @lru_cache()
 def create_app(config_settings=settings):
-    print("creating app")
     new_app = FastAPI(
         title=config_settings.app_name,
         version=config_settings.version,

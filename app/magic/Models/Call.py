@@ -55,7 +55,6 @@ class Call(DateModel):
 @run_in_background
 @parse_objects
 def save_call(call: Call):
-    print("IN SAVE CALLLL NOW")
     call.save()
 
 

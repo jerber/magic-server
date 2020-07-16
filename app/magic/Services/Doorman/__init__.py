@@ -13,16 +13,18 @@ from .errors import DoormanAuthException
 from app.magic.Decorators.firestore import need_firestore
 from app.magic.FieldTypes import PhoneNumber
 
+from app.magic.config import settings
+
 LOCATION, PROJECT_ID, DOORMAN_ID = (
-    os.environ.get("CLOUD_FUNCTION_LOCATION", "us-central1"),
-    os.environ.get("FIREBASE_PROJECT_ID"),
-    os.environ.get("DOORMAN_PUBLIC_PROJECT_ID"),
+    settings.cloud_function_location or "us-central1",
+    settings.firebase_project_id,
+    settings.doorman_public_project_id,
 )
 
 ID_TOKEN_ENDPOINT: str = f"https://{LOCATION}-{PROJECT_ID}.cloudfunctions.net/getIdToken"
 DOORMAN_BACKEND_ENDPOINT: str = "https://sending-messages-for-doorman.herokuapp.com/phoneLogic"
 
-token_url = "/token" if os.getenv("LOCAL") else f"/{os.getenv('STAGE')}/token"
+token_url = "/token" if settings.local else f"/{settings.stage}/token"
 oath2_scheme = OAuth2PasswordBearer(tokenUrl=token_url)
 
 

@@ -19,7 +19,6 @@ def get_service_account_path(service_account_name):
 
 
 def config_firestore(service_account_name):
-    print("configging firestore")
     service_account_path = get_service_account_path(service_account_name)
     if service_account_path.exists():
         # will this work on windows?
@@ -44,6 +43,9 @@ class Settings(BaseSettings):
     app_name: str = "GOAT Server"
     version: str = "0.0.1"
 
+    # for dev
+    print_level = 1
+
     # will be loaded first
     local: bool = False
 
@@ -59,6 +61,7 @@ class Settings(BaseSettings):
     twilio_account_sid: str = None
     twilio_auth_token: str = None
     twilio_messaging_service_sid: str = None
+    twilio_status_callback: str = None
     from_number: str = None
 
     # for segment

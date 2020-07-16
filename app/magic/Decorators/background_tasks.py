@@ -29,7 +29,8 @@ def run_in_background(f):
         secret_token: str = Body(...),
         params: str = Body(...),
     ):
-        print("endpoint just received!", "params", params)
+        if settings.print_level > 1:
+            print("endpoint just received!", "params", params)
         # get the task from dynamo
         response = Task.get_table().get_item(Key={"task_id": task_id})
         task_dict = response.get("Item")
@@ -40,8 +41,8 @@ def run_in_background(f):
         if not task or secret_token != task.secret_token:
             raise HTTPException(status_code=404, detail="Invalid task request.")
 
-        print("task status", task.status, task_dict)
         if task.status != "in-lambda":
+            # when local sometimes this happens before lambda changes queued to in-lambda
             if not task.local:
                 raise HTTPException(
                     status_code=404, detail="This task was already completed."
@@ -50,7 +51,8 @@ def run_in_background(f):
         j_params = json.loads(params)
         args = j_params.get("args", [])
         kwargs = j_params.get("kwargs", {})
-        print("inspect", inspect.signature(f), "a", args, "k", kwargs)
+        if settings.print_level > 1:
+            print("inspect", inspect.signature(f), "a", args, "k", kwargs)
 
         f(*args, **kwargs)
         return {"success": True, "message": ""}
@@ -61,7 +63,9 @@ def run_in_background(f):
             raise BackendException(
                 message="You cannot add tasks if you do not add a DB!"
             )
-        print("given to function", "args", args, "kwargs", kwargs)
+
+        if settings.print_level > 1:
+            print("given to function", "args", args, "kwargs", kwargs)
         task_params = TaskParams(args=list(args), kwargs=kwargs)
         now = datetime.utcnow()
         task = Task(

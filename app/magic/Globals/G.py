@@ -51,10 +51,8 @@ class G:
 
     def run_tasks_locally(self, task):
         # make a dict but make sure dates are properly parsed
-        time.sleep(2)  # give lambda time to trigger to in-lambda
         d = json.loads(task.json())
         resp = requests.post(task.url, json=d)
-        print("og resp", resp.content)
         print("resp from local task", resp.content)
 
     def save_tasks(self):

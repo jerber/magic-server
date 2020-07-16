@@ -1,18 +1,18 @@
 from twilio.rest import Client
 import os
 from functools import wraps
-
+from app.magic.config import settings
 
 from app.magic.Errors import TwilioException
 
-STATUS_CALLBACK = os.environ.get("TWILIO_STATUS_CALLBACK")
-MESSAGING_SERVICE_SID = os.environ.get("TWILIO_MESSAGING_SERVICE_SID")
+# STATUS_CALLBACK = os.environ.get("TWILIO_STATUS_CALLBACK")
+# MESSAGING_SERVICE_SID = os.environ.get("TWILIO_MESSAGING_SERVICE_SID")
 
-SID = os.environ.get("TWILIO_ACCOUNT_SID")
-AUTH_TOKEN = os.environ.get("TWILIO_AUTH_TOKEN")
+# SID = os.environ.get("TWILIO_ACCOUNT_SID")
+# AUTH_TOKEN = os.environ.get("TWILIO_AUTH_TOKEN")
 
 try:
-    client = Client(SID, AUTH_TOKEN)
+    client = Client(settings.twilio_account_sid, settings.twilio_auth_token)
 except Exception as e:
     print("Twilio SID or AUTH TOKEN not given.")
 
@@ -22,7 +22,7 @@ FROM_NUMBER = os.environ.get("FROM_NUMBER")
 def need_twilio_vars(f):
     @wraps(f)
     def wrapper(*args, **kwargs):
-        twilio_vars = [SID, AUTH_TOKEN]
+        twilio_vars = [settings.twilio_account_sid, settings.twilio_auth_token]
         if None in twilio_vars:
             raise TwilioException(
                 message="Not all Twilio credentials found in .env file. Need TWILIO_ACCOUNT_SID and TWILIO_AUTH_TOKEN."
@@ -35,7 +35,7 @@ def need_twilio_vars(f):
 def need_copilot_vars(f):
     @wraps(f)
     def wrapper(*args, **kwargs):
-        twilio_vars = [MESSAGING_SERVICE_SID]
+        twilio_vars = [settings.twilio_messaging_service_sid]
         if None in twilio_vars:
             raise TwilioException(
                 message="Not all Twilio co-pilot credentials found in .env file. Need MESSAGING_SERVICE_SID."
@@ -52,10 +52,10 @@ def send_text(to, body, from_number=FROM_NUMBER):
 
 
 @need_twilio_vars
-def send_text_with_copilot(to, body, status_callback=STATUS_CALLBACK):
+def send_text_with_copilot(to, body, status_callback=settings.twilio_status_callback):
     message = client.messages.create(
         body=body,
-        messaging_service_sid=MESSAGING_SERVICE_SID,
+        messaging_service_sid=settings.twilio_messaging_service_sid,
         to=to,
         status_callback=status_callback,
     )
