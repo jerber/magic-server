@@ -32,9 +32,13 @@ def config_firestore(service_account_name):
         db.conn
 
 
-env_path = os.path.join(os.getcwd(), ".env")
-if not os.path.exists(env_path):
-    env_path = ".env"
+def find_env_file(levels=7):
+    d = Path.cwd()
+    for _ in range(levels):
+        envs = list(d.glob("*.env"))
+        if envs:
+            return envs[0]
+        d = d.parent
 
 
 class Settings(BaseSettings):
@@ -74,8 +78,14 @@ class Settings(BaseSettings):
     # for saving calls
     save_calls: bool = True
 
+    # for email
+    email_port: int = 465
+    email_smtp_server: str = "smtp.gmail.com"
+    sender_email: str
+    sender_password: str
+
     class Config:
-        env_file = env_path
+        env_file = find_env_file() or ".env"
 
 
 # If you want to make the env variables from .env available
