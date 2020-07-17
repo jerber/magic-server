@@ -110,6 +110,22 @@ def make_body_jsonable(body):
     return None
 
 
+def safe_loads(body):
+    if body is None:
+        return body
+    try:
+        return json.loads(body)
+    except TypeError as _:
+        pass
+
+    try:
+        return str(body)
+    except TypeError as _:
+        pass
+
+    return None
+
+
 async def make_call_from_request_and_response(
     request: FastAPIRequest,
     response: Optional[FastApiResponse],
@@ -136,11 +152,12 @@ async def make_call_from_request_and_response(
         scheme=request.url.scheme,
         port=request.url.port,
     )
+
     response_obj = (
         None
         if not response
         else Response(
-            body=json.loads(response.body),
+            body=safe_loads(response.body),
             headers=dict(response.headers),
             status_code=response.status_code,
         )
@@ -149,7 +166,10 @@ async def make_call_from_request_and_response(
     error_obj = (
         None
         if not error
-        else Error(error_class=str(error.__class__), error_dict=error.__dict__)
+        else Error(
+            error_class=str(error.__class__),
+            error_dict=make_body_jsonable(error.__dict__),
+        )
     )
 
     # TODO what if error.__Dict is not json encodable... must check that before...
