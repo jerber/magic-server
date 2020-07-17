@@ -93,6 +93,23 @@ async def get_request_body(request: FastAPIRequest):
     return None
 
 
+def make_body_jsonable(body):
+    try:
+        json.dumps(body)
+        return body
+    except TypeError as _:
+        pass
+
+    # now try making string
+    try:
+        body_str = str(body)
+        return body_str
+    except TypeError as _:
+        pass
+
+    return None
+
+
 async def make_call_from_request_and_response(
     request: FastAPIRequest,
     response: Optional[FastApiResponse],
@@ -103,10 +120,11 @@ async def make_call_from_request_and_response(
         return
 
     body = await get_request_body(request)
+    jsonable_body = make_body_jsonable(body)
 
     request_obj = Request(
         request_id=random_str(30),
-        body=body,
+        body=jsonable_body,
         headers=dict(request.headers),
         cookies=dict(request.cookies),
         url=str(request.url),

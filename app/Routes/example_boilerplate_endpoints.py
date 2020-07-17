@@ -75,6 +75,21 @@ def test_errors():
     raise TestError(message="This test worked!")
 
 
+from fastapi import File, UploadFile
+
+
+@router.post("/test_file", tags=["boilerplate"])
+def test_file(file: bytes = File(...)):
+    print(str(file)[100])
+    return len(file)
+
+
+@router.post("/test_upload_file", tags=["boilerplate"])
+def test_file(file: UploadFile = File(...)):
+    print("filename", file.filename)
+    return "sheesh"
+
+
 """Sending to segment example and test."""
 
 
