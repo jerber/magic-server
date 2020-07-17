@@ -2,11 +2,13 @@ import requests
 import os
 from functools import wraps
 
+
 from fastapi import Depends
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from .CurrentUser import CurrentUser
 
 from app.magic import router
+import firebase_admin
 from firebase_admin import auth
 
 from .errors import DoormanAuthException
@@ -80,9 +82,12 @@ def login(form_data: OAuth2PasswordRequestForm = Depends()):
 
 @need_firestore
 def get_current_user(token: str = Depends(oath2_scheme)):
-    decoded = auth.verify_id_token(token)
-    current_user = CurrentUser(**decoded)
-    return current_user
+    try:
+        decoded = auth.verify_id_token(token)
+        current_user = CurrentUser(**decoded)
+        return current_user
+    except firebase_admin._token_gen.ExpiredIdTokenError as e:
+        raise DoormanAuthException(message=e)
 
 
 GET_USER = Depends(get_current_user)

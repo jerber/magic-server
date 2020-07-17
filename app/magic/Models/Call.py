@@ -20,7 +20,7 @@ from app.magic.config import settings
 
 class Error(BaseModel):
     error_class: str
-    error_dict: dict = {}
+    error_dict: Any
 
 
 class Response(BaseModel):
