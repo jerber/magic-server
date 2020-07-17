@@ -172,8 +172,7 @@ async def make_call_from_request_and_response(
         )
     )
 
-    # TODO what if error.__Dict is not json encodable... must check that before...
-    # or maybe wrap this whole thing w a try catch just in case so it does not fuck up everything else
+    # maybe wrap this whole thing w a try catch just in case so it does not fuck up everything else
     # will do this once I test this out for a while... prob
 
     call = Call(
