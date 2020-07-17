@@ -92,13 +92,19 @@ def test_file(file: UploadFile = File(...)):
 
 """Sending to segment example and test."""
 
-
+from app.magic.Services.Segment import analytics
 from app.magic.Services import Segment
 
 
 @router.post("/test_segment", tags=["boilerplate"])
 def test_segment(id: str, action, body: dict):
     Segment.track(id, action, body)
+    return "done!"
+
+
+@router.post("/test_segment_without_background", tags=["boilerplate"])
+def test_segment(id: str, action, body: dict):
+    analytics.track(id, action, body)
     return "done!"
 
 

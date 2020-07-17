@@ -82,7 +82,7 @@ custom:
 #    types:
 #      - '*/*'
   warmup:
-    concurrency: 2 # Warm up 5 concurrent instances
+    concurrency: 5 # Warm up 5 concurrent instances
     prewarm: true
 
   logForwarding:
