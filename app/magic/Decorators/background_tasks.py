@@ -18,12 +18,14 @@ from app.magic.Errors import BackendException
 
 from app.magic.config import settings
 
+from app.magic.Decorators.helpers import async_safe
+
 
 def run_in_background(f):
     router_path = f"/run_in_background/{f.__name__}"
 
     @background_router.post(router_path, tags=["background_tasks"])
-    def endpoint(
+    async def endpoint(
         request: Request,
         task_id: str = Body(...),
         secret_token: str = Body(...),
@@ -54,7 +56,8 @@ def run_in_background(f):
         if settings.print_level > 1:
             print("inspect", inspect.signature(f), "a", args, "k", kwargs)
 
-        f(*args, **kwargs)
+        await async_safe(f, *args, **kwargs)
+
         return {"success": True, "message": ""}
 
     @wraps(f)

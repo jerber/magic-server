@@ -3,10 +3,12 @@ from pydantic import BaseModel
 import inspect
 from app.magic.config import settings
 
+from app.magic.Decorators.helpers import async_safe
+
 
 def parse_objects(f):
     @wraps(f)
-    def wrapper(*args, **kwargs):
+    async def wrapper(*args, **kwargs):
         sigs = inspect.signature(f)
         parameters = sigs.parameters
         args = list(args)
@@ -27,6 +29,7 @@ def parse_objects(f):
 
         if settings.print_level > 1:
             print("PARSE OBJS", "args", args, "kwargs", kwargs)
-        return f(*args, **kwargs)
+
+        return await async_safe(f, *args, **kwargs)
 
     return wrapper

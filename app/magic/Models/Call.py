@@ -13,7 +13,7 @@ from app.magic.Utils.random_utils import random_str
 
 from app.magic.Decorators.background_tasks import run_in_background
 from app.magic.Decorators.parse_objects import parse_objects
-from app.magic.Decorators.time import async_timeit, sync_timeit
+from app.magic.Decorators.time import timeit
 
 from app.magic.config import settings
 
