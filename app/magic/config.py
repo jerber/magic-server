@@ -93,6 +93,9 @@ class Settings(BaseSettings):
     # for magic link
     company_name: str = None
 
+    # for stripe
+    stripe_api_key: str = None
+
     class Config:
         env_file = find_env_file() or ".env"
 

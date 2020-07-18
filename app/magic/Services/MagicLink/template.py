@@ -2,8 +2,7 @@ from app.magic.config import settings
 
 email_body = f"""Hello,
 
-We received a request to sign in to {settings.company_name} using this email address. 
-If you want to sign in with <EMAIL_ADDRESS>, click this link:
+We received a request to sign in to {settings.company_name} using this email address. If you want to sign in with <EMAIL_ADDRESS>, click this link:
 
 <LINK>.
 
