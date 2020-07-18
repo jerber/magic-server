@@ -18,6 +18,10 @@ app.include_router(background_router)
 client = TestClient(app)
 
 
+def test_root():
+    response = client.get
+
+
 def test_test_errors():
     valid_response = {"success": False, "message": "This test worked!"}
     response = client.get("/test_errors")
