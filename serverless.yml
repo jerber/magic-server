@@ -48,6 +48,9 @@ provider:
     MAILGUN_DOMAIN_NAME: ${env:MAILGUN_DOMAIN_NAME}
     MAILGUN_SENDER_NAME: ${env:MAILGUN_SENDER_NAME}
     MAILGUN_SENDER_EMAIL: ${env:MAILGUN_SENDER_EMAIL}
+    # MagicLink
+    COMPANY_NAME: ${env:COMPANY_NAME}
+
 
 functions:
   app:

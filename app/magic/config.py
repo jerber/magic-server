@@ -90,6 +90,9 @@ class Settings(BaseSettings):
     mailgun_sender_name: str = None
     mailgun_sender_email: str = None
 
+    # for magic link
+    company_name: str = None
+
     class Config:
         env_file = find_env_file() or ".env"
 
