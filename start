@@ -1,0 +1,3 @@
+#!/bin/bash
+
+export LOCAL="True"; python main.py

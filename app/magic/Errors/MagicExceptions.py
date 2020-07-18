@@ -31,5 +31,5 @@ class TwilioException(MagicException):
 def backend_exception_handler(request: Request, exc: MagicException):
     return JSONResponse(
         status_code=exc.status_code,
-        content={"success": False, "message": f"{exc.message}", "error": True},
+        content={"success": False, "message": f"{exc.message}"},
     )

@@ -3,21 +3,8 @@ import os
 from pydantic import BaseSettings
 
 
-def get_service_account_path(service_account_name):
-    """Tries to get the google account credentials service account json in either
-    the base directory or in the magic directory"""
-    curr_dir_path = Path(__file__).parent.absolute()
-    this_dir_service_path = curr_dir_path / service_account_name
-
-    return (
-        this_dir_service_path
-        if this_dir_service_path.exists()
-        else Path.cwd() / service_account_name
-    )
-
-
 def config_firestore(service_account_name):
-    service_account_path = get_service_account_path(service_account_name)
+    service_account_path = find_file(service_account_name)
     if service_account_path.exists():
         # will this work on windows?
         os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = os.path.join(
@@ -32,10 +19,10 @@ def config_firestore(service_account_name):
         db.conn
 
 
-def find_env_file(levels=7):
+def find_file(glob_string: str, levels: int = 7):
     d = Path.cwd()
     for _ in range(levels):
-        envs = list(d.glob("*.env"))
+        envs = list(d.glob(glob_string))
         if envs:
             return envs[0]
         d = d.parent
@@ -97,7 +84,7 @@ class Settings(BaseSettings):
     stripe_api_key: str = None
 
     class Config:
-        env_file = find_env_file() or ".env"
+        env_file = find_file(glob_string="*.env") or ".env"
 
 
 # If you want to make the env variables from .env available
