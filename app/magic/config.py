@@ -84,6 +84,12 @@ class Settings(BaseSettings):
     sender_email: str
     sender_password: str
 
+    # for mailgun
+    mailgun_private_api_key: str = None
+    mailgun_domain_name: str = None
+    mailgun_sender_name: str = None
+    mailgun_sender_email: str = None
+
     class Config:
         env_file = find_env_file() or ".env"
 
