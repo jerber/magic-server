@@ -1,5 +1,6 @@
 import os
 from pathlib import Path
+import datetime
 
 import time
 from functools import lru_cache
@@ -54,8 +55,8 @@ def add_addons(new_app):
     add_hello_world_testing_route(new_app)
 
 
-@lru_cache()
 def create_app(config_settings=settings):
+    print("creating_app", datetime.datetime.now())
     new_app = FastAPI(
         title=config_settings.app_name,
         version=config_settings.version,
@@ -67,9 +68,23 @@ def create_app(config_settings=settings):
     return new_app
 
 
-app = create_app()
+def create_handler(app):
+    def handler(event, context):
+        """Handler to give to lambda... which wraps FastAPI"""
+        if event.get("source") in ["aws.events", "serverless-plugin-warmup"]:
+            print("Lambda is warm!")
+            return {}
+
+        asgi_handler = Mangum(app, api_gateway_base_path=settings.stage)
+        response = asgi_handler(event, context)
+        return response
+
+    return handler
 
 
+# app = create_app()
+
+'''
 def handler(event, context):
     """Handler to give to lambda... which wraps FastAPI"""
     if event.get("source") in ["aws.events", "serverless-plugin-warmup"]:
@@ -79,3 +94,4 @@ def handler(event, context):
     asgi_handler = Mangum(app, api_gateway_base_path=settings.stage)
     response = asgi_handler(event, context)
     return response
+'''

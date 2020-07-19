@@ -1,5 +1,6 @@
 import os
 import uvicorn
+
 from app.magic import app, handler
 
 public_host = "0.0.0.0"

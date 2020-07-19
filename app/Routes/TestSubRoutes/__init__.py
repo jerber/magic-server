@@ -2,7 +2,9 @@ from app.magic.Utils.importing import get_all_subfiles_and_dirs
 
 from fastapi import APIRouter
 
-from app.magic import app, CallRoute
+
+from app.magic import app
+from app.magic.Utils.middleware import CallRoute
 
 sub_router = APIRouter(route_class=CallRoute)
 

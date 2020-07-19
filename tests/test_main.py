@@ -8,6 +8,8 @@ from main import use_host, port
 # first start the sever w ./start
 base_url = f"http://{use_host}:{port}"
 # are you using real url and real db?
+
+# RUNNING NON LOCALLY NOW... just put in the url you want to run here.... will use defualt db
 if os.getenv("aws") or True:
     real_url = f"https://jeremyberman.org/dev"
     base_url = real_url

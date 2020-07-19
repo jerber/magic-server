@@ -2,17 +2,25 @@
 from fastapi import APIRouter
 
 from .config import settings
-from app.magic.app_factory import app, handler
+from app.magic.app_factory import create_app, create_handler
 
-from app.magic.Errors.MagicExceptions import MagicException
+app = create_app(config_settings=settings)
+handler = create_handler(app)
 
 background_router = APIRouter()
-
-from app.magic.Utils.middleware import CallRoute  # this requires a background router
+# this requires a background router
+from app.magic.Utils.middleware import CallRoute
 
 router = APIRouter(route_class=CallRoute)
 
-from app import Routes  # import all of the routes
 
-app.include_router(router)
-app.include_router(background_router)
+def add_routes(this_app):
+
+    # import all of the routes
+    from app import Routes
+
+    this_app.include_router(router)
+    this_app.include_router(background_router)
+
+
+add_routes(app)
