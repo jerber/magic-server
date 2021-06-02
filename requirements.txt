@@ -56,7 +56,7 @@ stripe==2.49.0
 twilio==6.43.0
 typing-extensions==3.7.4.2
 uritemplate==3.0.1
-urllib3==1.25.9
+urllib3==1.26.5
 uvicorn==0.11.5
 uvloop==0.14.0
 wcwidth==0.2.5
